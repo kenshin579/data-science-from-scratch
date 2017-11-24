@@ -1,6 +1,7 @@
 # at this stage in the book we haven't actually installed matplotlib,
 # comment this out if you need to
 from matplotlib import pyplot as plt
+import pprint
 
 ##########################
 #                        #
@@ -9,22 +10,21 @@ from matplotlib import pyplot as plt
 ##########################
 
 users = [
-    { "id": 0, "name": "Hero" },
-    { "id": 1, "name": "Dunn" },
-    { "id": 2, "name": "Sue" },
-    { "id": 3, "name": "Chi" },
-    { "id": 4, "name": "Thor" },
-    { "id": 5, "name": "Clive" },
-    { "id": 6, "name": "Hicks" },
-    { "id": 7, "name": "Devin" },
-    { "id": 8, "name": "Kate" },
-    { "id": 9, "name": "Klein" },
-    { "id": 10, "name": "Jen" }
+    {"id": 0, "name": "Hero"},
+    {"id": 1, "name": "Dunn"},
+    {"id": 2, "name": "Sue"},
+    {"id": 3, "name": "Chi"},
+    {"id": 4, "name": "Thor"},
+    {"id": 5, "name": "Clive"},
+    {"id": 6, "name": "Hicks"},
+    {"id": 7, "name": "Devin"},
+    {"id": 8, "name": "Kate"},
+    {"id": 9, "name": "Klein"},
+    {"id": 10, "name": "Jen"}
 ]
 
 friendships = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (3, 4),
                (4, 5), (5, 6), (5, 7), (6, 8), (7, 8), (8, 9)]
-
 
 # first give each user an empty list
 for user in users:
@@ -33,18 +33,22 @@ for user in users:
 # and then populate the lists with friendships
 for i, j in friendships:
     # this works because users[i] is the user whose id is i
-    users[i]["friends"].append(users[j]) # add i as a friend of j
-    users[j]["friends"].append(users[i]) # add j as a friend of i
+    users[i]["friends"].append(users[j])  # add i as a friend of j
+    users[j]["friends"].append(users[i])  # add j as a friend of i
+
+# pprint.pprint(users)
+print(users)
 
 def number_of_friends(user):
     """how many friends does _user_ have?"""
-    return len(user["friends"]) # length of friend_ids list
+    return len(user["friends"])  # length of friend_ids list
 
 total_connections = sum(number_of_friends(user)
-                        for user in users) # 24
+                        for user in users)  # 24
 
 num_users = len(users)
-avg_connections = total_connections / num_users # 2.4
+avg_connections = total_connections / num_users  # 2.4
+
 
 ################################
 #                              #
@@ -55,14 +59,17 @@ avg_connections = total_connections / num_users # 2.4
 def friends_of_friend_ids_bad(user):
     # "foaf" is short for "friend of a friend"
     return [foaf["id"]
-            for friend in user["friends"] # for each of user's friends
-            for foaf in friend["friends"]] # get each of _their_ friends
+            for friend in user["friends"]  # for each of user's friends
+            for foaf in friend["friends"]]  # get each of _their_ friends
 
-from collections import Counter # not loaded by default
+
+from collections import Counter  # not loaded by default
+
 
 def not_the_same(user, other_user):
     """two users are not the same if they have different ids"""
     return user["id"] != other_user["id"]
+
 
 def not_friends(user, other_user):
     """other_user is not a friend if he's not in user["friends"];
@@ -70,14 +77,16 @@ def not_friends(user, other_user):
     return all(not_the_same(friend, other_user)
                for friend in user["friends"])
 
+
 def friends_of_friend_ids(user):
     return Counter(foaf["id"]
                    for friend in user["friends"]  # for each of my friends
                    for foaf in friend["friends"]  # count *their* friends
-                   if not_the_same(user, foaf)    # who aren't me
-                   and not_friends(user, foaf))   # and aren't my friends
+                   if not_the_same(user, foaf)  # who aren't me
+                   and not_friends(user, foaf))  # and aren't my friends
 
-print(friends_of_friend_ids(users[3])) # Counter({0: 2, 5: 1})
+
+print(friends_of_friend_ids(users[3]))  # Counter({0: 2, 5: 1})
 
 interests = [
     (0, "Hadoop"), (0, "Big Data"), (0, "HBase"), (0, "Java"),
@@ -96,10 +105,12 @@ interests = [
     (9, "Java"), (9, "MapReduce"), (9, "Big Data")
 ]
 
+
 def data_scientists_who_like(target_interest):
     return [user_id
             for user_id, user_interest in interests
             if user_interest == target_interest]
+
 
 from collections import defaultdict
 
@@ -115,11 +126,13 @@ interests_by_user_id = defaultdict(list)
 for user_id, interest in interests:
     interests_by_user_id[user_id].append(interest)
 
+
 def most_common_interests_with(user_id):
     return Counter(interested_user_id
-        for interest in interests_by_user_id["user_id"]
-        for interested_user_id in user_ids_by_interest[interest]
-        if interested_user_id != user_id)
+                   for interest in interests_by_user_id["user_id"]
+                   for interested_user_id in user_ids_by_interest[interest]
+                   if interested_user_id != user_id)
+
 
 ###########################
 #                         #
@@ -133,6 +146,7 @@ salaries_and_tenures = [(83000, 8.7), (88000, 8.1),
                         (60000, 2.5), (83000, 10),
                         (48000, 1.9), (63000, 4.2)]
 
+
 def make_chart_salaries_by_tenure():
     tenures = [tenure for salary, tenure in salaries_and_tenures]
     salaries = [salary for salary, tenure in salaries_and_tenures]
@@ -140,6 +154,7 @@ def make_chart_salaries_by_tenure():
     plt.xlabel("Years Experience")
     plt.ylabel("Salary")
     plt.show()
+
 
 # keys are years
 # values are the salaries for each tenure
@@ -149,14 +164,19 @@ for salary, tenure in salaries_and_tenures:
     salary_by_tenure[tenure].append(salary)
 
 average_salary_by_tenure = {
-    tenure : sum(salaries) / len(salaries)
+    tenure: sum(salaries) / len(salaries)
     for tenure, salaries in salary_by_tenure.items()
 }
 
+
 def tenure_bucket(tenure):
-    if tenure < 2: return "less than two"
-    elif tenure < 5: return "between two and five"
-    else: return "more than five"
+    if tenure < 2:
+        return "less than two"
+    elif tenure < 5:
+        return "between two and five"
+    else:
+        return "more than five"
+
 
 salary_by_tenure_bucket = defaultdict(list)
 
@@ -165,8 +185,8 @@ for salary, tenure in salaries_and_tenures:
     salary_by_tenure_bucket[bucket].append(salary)
 
 average_salary_by_bucket = {
-  tenure_bucket : sum(salaries) / len(salaries)
-  for tenure_bucket, salaries in salary_by_tenure_bucket.items()
+    tenure_bucket: sum(salaries) / len(salaries)
+    for tenure_bucket, salaries in salary_by_tenure_bucket.items()
 }
 
 
@@ -177,9 +197,13 @@ average_salary_by_bucket = {
 #################
 
 def predict_paid_or_unpaid(years_experience):
-  if years_experience < 3.0: return "paid"
-  elif years_experience < 8.5: return "unpaid"
-  else: return "paid"
+    if years_experience < 3.0:
+        return "paid"
+    elif years_experience < 8.5:
+        return "unpaid"
+    else:
+        return "paid"
+
 
 ######################
 #                    #
@@ -191,7 +215,6 @@ words_and_counts = Counter(word
                            for user, interest in interests
                            for word in interest.lower().split())
 
-
 if __name__ == "__main__":
 
     print()
@@ -201,7 +224,6 @@ if __name__ == "__main__":
     print("#")
     print("######################")
     print()
-
 
     print("total connections", total_connections)
     print("number of users", num_users)
@@ -214,8 +236,8 @@ if __name__ == "__main__":
 
     print("users sorted by number of friends:")
     print(sorted(num_friends_by_id,
-                 key=lambda pair: pair[1],                       # by number of friends
-                 reverse=True))                                  # largest to smallest
+                 key=lambda pair: pair[1],  # by number of friends
+                 reverse=True))  # largest to smallest
 
     print()
     print("######################")
@@ -224,7 +246,6 @@ if __name__ == "__main__":
     print("#")
     print("######################")
     print()
-
 
     print("friends of friends bad for user 0:", friends_of_friend_ids_bad(users[0]))
     print("friends of friends for user 3:", friends_of_friend_ids(users[3]))
